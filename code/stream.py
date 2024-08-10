@@ -4,16 +4,14 @@ import time
 
 app = Flask(__name__)
 
-# Dummy data for demonstration
 robot_stats = {
     'uptime': 0,
     'num_operations': 0,
     'robot_position': [0, 0]
 }
 
-# OpenCV VideoCapture for camera feeds
-camera1 = cv2.VideoCapture(0)  # Replace with your camera source
-camera2 = cv2.VideoCapture(1)  # Replace with your second camera source
+camera1 = cv2.VideoCapture(0)
+camera2 = cv2.VideoCapture(1)
 
 def generate_frames(camera):
     while True:
@@ -39,14 +37,12 @@ def stream2():
 
 @app.route('/stats')
 def stats():
-    # Simulate updating the stats
     robot_stats['uptime'] += 1
     robot_stats['num_operations'] += 1
     return jsonify(robot_stats)
 
 @app.route('/shutdown', methods=['POST'])
 def shutdown():
-    # Logic to shut down the robot
     return 'Robot is shutting down...'
 
 if __name__ == '__main__':
