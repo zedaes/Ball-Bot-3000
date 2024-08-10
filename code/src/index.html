@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Robot Dashboard</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                background-color: #f0f4f8;
+                color: #333;
+                text-align: center;
+                padding: 20px;
+            }
+            .container {
+                max-width: 1200px;
+                margin: 0 auto;
+                padding: 20px;
+                background: #fff;
+                border-radius: 10px;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            }
+            h1 {
+                color: #4caf50;
+            }
+            .cameraFeed,
+            .visualField,
+            .stats {
+                margin: 20px 0;
+                padding: 20px;
+                background-color: #e8f5e9;
+                border-radius: 8px;
+                border: 1px solid #4caf50;
+                display: inline-block;
+                vertical-align: top;
+            }
+            .cameraFeed {
+                width: 45%;
+            }
+            .visualField {
+                width: 45%;
+            }
+            .stats {
+                width: 90%;
+            }
+            img {
+                max-width: 100%;
+                border-radius: 8px;
+            }
+            button {
+                background-color: #f44336;
+                color: white;
+                border: none;
+                padding: 15px 32px;
+                text-align: center;
+                text-decoration: none;
+                display: inline-block;
+                font-size: 16px;
+                border-radius: 8px;
+                cursor: pointer;
+            }
+            button:hover {
+                background-color: #d32f2f;
+            }
+            .visualField {
+                position: relative;
+                height: 480px;
+                background: #e0e0e0;
+            }
+            .robotPosition {
+                position: absolute;
+                width: 10px;
+                height: 10px;
+                background-color: #4caf50;
+                border-radius: 50%;
+                transform: translate(-50%, -50%);
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <h1>Robot Dashboard</h1>
+            <div class="cameraFeed">
+                <h2>Camera 1 Feed:</h2>
+                <img id="camera1" src="/stream" alt="Camera 1 Feed" />
+            </div>
+            <div class="cameraFeed">
+                <h2>Camera 2 Feed:</h2>
+                <img id="camera2" src="/stream2" alt="Camera 2 Feed" />
+            </div>
+            <div class="visualField">
+                <h2>Robot Position:</h2>
+                <div id="robotPosition" class="robotPosition"></div>
+            </div>
+            <div class="stats">
+                <h2>Statistics:</h2>
+                <p>Uptime: <span id="uptime">Calculating...</span></p>
+                <p>
+                    Number of Operations:
+                    <span id="numOperations">Calculating...</span>
+                </p>
+            </div>
+            <button onclick="shutdownRobot()">Shutdown Robot</button>
+        </div>
+        <script>
+            function shutdownRobot() {
+                fetch("/shutdown", { method: "POST" })
+                    .then((response) => response.text())
+                    .then((text) => {
+                        alert(text);
+                    });
+            }
+
+            function updateStats() {
+                fetch("/stats")
+                    .then((response) => response.json())
+                    .then((data) => {
+                        document.getElementById("uptime").textContent =
+                            (data.uptime / 60).toFixed(2) + " minutes";
+                        document.getElementById("numOperations").textContent =
+                            data.num_operations;
+
+                        const pos = data.robot_position;
+                        const robotDiv =
+                            document.getElementById("robotPosition");
+                        robotDiv.style.left = pos[0] + "px";
+                        robotDiv.style.top = pos[1] + "px";
+                    });
+            }
+
+            setInterval(updateStats, 1);
+        </script>
+    </body>
+</html>
