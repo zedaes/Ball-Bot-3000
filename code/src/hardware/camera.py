@@ -34,3 +34,13 @@ class Camera:
             if radius > 5:
                 ballsPositions.append((int(x), int(y), int(radius)))
         return ballsPositions, mask
+
+    def checkup(self):
+        passed = False
+        try:
+            frame = self.getFrame()
+            if frame is None or frame.size == 0:
+                raise RuntimeError("Camera is not capturing frames.")
+            return passed, f"Camera {self.cameraIndex} is working."
+        except Exception as e:
+            return passed, f"Camera checkup failed: {e}"

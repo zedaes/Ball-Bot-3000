@@ -66,3 +66,12 @@ class Motor:
         if self.isSetup:
             GPIO.cleanup()
             self.isSetup = False
+
+    def checkup(self):
+        passed = False
+        try:
+            GPIO.output(self.stepPin, GPIO.HIGH)
+            GPIO.output(self.directionPin, GPIO.LOW)
+            return passed, f"Motor on pins {self.stepPin}, {self.directionPin} is responsive."
+        except Exception as e:
+            return passed, f"Motor checkup failed: {e}"
